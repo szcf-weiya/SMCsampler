@@ -49,6 +49,16 @@ lambda.prior.alpha = 2.0 # fixed?
 lambda.prior.beta.g = 0.2
 lambda.prior.beta.h = 10*mu.prior.kappa
 
+## ###################
+## prior on weight
+## 
+## weight \sim Dirichlet(delta)
+##
+## can be simulate from gamma(delta, 1) and standardize
+## ###################
+
+w.prior.delta = 1.0 # fixed?
+
 ## ##################
 ## an SMC algorithm with MAX densities
 ## 
@@ -66,8 +76,11 @@ for (n in 0:(MAX-1))
     
     for (i in 1:POP)
     {
-      beta[i] = lambda.prior.beta.g/lambda.prior.beta.h
-      
+        beta[i] = lambda.prior.beta.g/lambda.prior.beta.h
+        mu[,i] = mu.prior.xi #+TODO 
+        lambda[,i] = rgamma(KM, lambda.prior.alpha, beta[i])
+        w[,i] = rgamma(KM, w.prior.delta, 1.0)
+        w[,i] = w[,i]/sum(w[,i])
     }
   }
 }
